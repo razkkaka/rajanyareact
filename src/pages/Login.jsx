@@ -9,38 +9,57 @@ export default function Login() {
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
+  // 1. KITA PISAHKAN LOGIKA LOGIN AGAR BISA DIPANGGIL KAPAN SAJA
+  const processLogin = async (loginEmail, loginPassword) => {
     setLoading(true)
     try {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ email: loginEmail, password: loginPassword }),
       })
       const data = await res.json()
+      
       if (res.ok) {
-        // Simpan token DAN data user agar sistem tahu role-nya apa
         localStorage.setItem('token', data.token)
         localStorage.setItem('user', JSON.stringify(data.user)) 
         
-        toast.success('Login berhasil!')
-        if (data.user.role === 'owner' || data.user.role === 'admin') navigate('/admin')
-        else navigate('/')
+        toast.success('Login berhasil! Mengalihkan...')
+        // Langsung lempar ke halaman admin jika role-nya owner/admin
+        if (data.user.role === 'owner' || data.user.role === 'admin') {
+          navigate('/admin')
+        } else {
+          navigate('/')
+        }
       } else {
-        toast.error(data.error)
+        toast.error(data.error || 'Email atau password salah')
       }
     } catch (error) {
-      toast.error('Terjadi kesalahan')
+      console.error("Error saat login:", error)
+      toast.error('Gagal terhubung ke server')
     } finally {
+      // Pastikan loading selalu berhenti walau error sekalipun
       setLoading(false)
     }
   }
 
-  // FUNGSI UNTUK MENGISI OTOMATIS AKUN DEMO
+  // 2. KETIKA TOMBOL "MASUK" DIKLIK MANUAL
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    processLogin(formData.email, formData.password)
+  }
+
+  // 3. KETIKA TOMBOL "DEMO AKUN" DIKLIK (SATU KLIK LANGSUNG LOGIN)
   const fillDemoAdmin = () => {
-    setFormData({ email: 'fathia@backseat.com', password: 'owner123' })
-    toast.success('Akun demo terisi otomatis!')
+    const demoEmail = 'fathia@backseat.com'
+    const demoPass = 'owner123'
+    
+    // Isi otomatis di layar
+    setFormData({ email: demoEmail, password: demoPass })
+    toast.loading('Mencoba masuk sebagai Admin...', { duration: 1500 })
+    
+    // Langsung jalankan proses login secara otomatis!
+    processLogin(demoEmail, demoPass)
   }
 
   return (
@@ -70,7 +89,6 @@ export default function Login() {
             <span className="mb-2 block text-sm font-medium text-coffee-800">Password</span>
             <div className="relative">
               <FiLock className="absolute left-3 top-1/2 -translate-y-1/2 text-coffee-400" />
-              {/* PERBAIKAN: Placeholder tanda tanya diganti jadi titik-titik */}
               <input 
                 type={showPassword ? 'text' : 'password'} 
                 value={formData.password} 
@@ -94,12 +112,12 @@ export default function Login() {
           </button>
         </form>
 
-        {/* UI TOMBOL DEMO ADMIN */}
+        {/* UI TOMBOL DEMO ADMIN KLIK LANGSUNG MASUK */}
         <div 
-          className="mt-6 bg-amber-50 border border-amber-200 rounded-xl p-4 cursor-pointer hover:bg-amber-100 transition"
-          onClick={fillDemoAdmin}
+          className={`mt-6 bg-amber-50 border border-amber-200 rounded-xl p-4 transition ${loading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:bg-amber-100'}`}
+          onClick={!loading ? fillDemoAdmin : undefined}
         >
-          <div className="text-xs font-bold text-amber-800 mb-1.5">💡 Demo Akun Admin (klik untuk isi otomatis)</div>
+          <div className="text-xs font-bold text-amber-800 mb-1.5">💡 Demo Akun Admin (klik untuk langsung masuk)</div>
           <div className="text-xs text-amber-700">📧 fathia@backseat.com &nbsp; 🔑 owner123</div>
         </div>
 
