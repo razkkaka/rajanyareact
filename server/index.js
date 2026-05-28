@@ -37,13 +37,16 @@ app.use('/api/favorites', favoriteRoutes)
 app.use('/api/collaboration', collaborationRoutes)
 app.use('/api/ai', aiRoutes)
 
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../dist')))
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../dist/index.html'))
-  })
-}
+// ==========================================
+// FIX: Hapus pengecekan if (NODE_ENV) di sini!
+// ==========================================
+app.use(express.static(path.join(__dirname, '../dist')))
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../dist/index.html'))
+})
+// ==========================================
 
 app.listen(PORT, () => {
-  console.log(`?? Backseat Barista server running on port ${PORT}`)
+  console.log(`☕ Backseat Barista server running on port ${PORT}`)
 })
