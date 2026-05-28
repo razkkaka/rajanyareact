@@ -1,7 +1,8 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import ProtectedRoute from './components/ProtectedRoute'
+import { useAuth } from './context/AuthContext'
 
 import Home from './pages/Home'
 import Menu from './pages/Menu'
@@ -21,6 +22,8 @@ import OrderManagement from './pages/admin/OrderManagement'
 import Verification from './pages/admin/Verification'
 
 export default function App() {
+  const { isOwner } = useAuth() // Ambil status apakah yang login Admin/Owner
+
   return (
     <div className="min-h-screen bg-cream-50 text-coffee-900">
       <Navbar />
@@ -29,11 +32,14 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/menu" element={<Menu />} />
           <Route path="/product/:id" element={<ProductDetail />} />
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/checkout" element={<Checkout />} />
+          
+          {/* BLOKIR ADMIN DARI KERANJANG & CHECKOUT */}
+          <Route path="/cart" element={isOwner ? <Navigate to="/admin" /> : <Cart />} />
+          <Route path="/checkout" element={isOwner ? <Navigate to="/admin" /> : <Checkout />} />
+          <Route path="/favorites" element={isOwner ? <Navigate to="/admin" /> : <ProtectedRoute><Favorites /></ProtectedRoute>} />
+          
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/favorites" element={<ProtectedRoute><Favorites /></ProtectedRoute>} />
           <Route path="/orders" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
           <Route path="/orders/:id" element={<ProtectedRoute><OrderDetail /></ProtectedRoute>} />
           <Route path="/collaboration" element={<Collaboration />} />

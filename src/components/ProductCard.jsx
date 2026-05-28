@@ -4,7 +4,8 @@ import toast from 'react-hot-toast'
 import { useAuth } from '../context/AuthContext'
 
 export default function ProductCard({ product, onFavoriteToggle, isFavorited }) {
-  const { user, token } = useAuth()
+  // 1. TAMBAHKAN isOwner DI SINI
+  const { user, token, isOwner } = useAuth()
 
   const formatPrice = (price) => new Intl.NumberFormat('id-ID', {
     style: 'currency',
@@ -85,20 +86,25 @@ export default function ProductCard({ product, onFavoriteToggle, isFavorited }) 
             <p className="text-lg font-bold text-coffee-900">{formatPrice(product.price)}</p>
             <p className="text-xs text-coffee-500">{product.stock_status === 'available' ? 'Tersedia' : 'Stok habis'}</p>
           </div>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={handleFavoriteClick}
-              className={`p-2 rounded-full transition ${isFavorited ? 'bg-red-100 text-red-500' : 'bg-cream-100 text-coffee-700 hover:bg-cream-200'}`}
-            >
-              <FiHeart className={isFavorited ? 'fill-current' : ''} />
-            </button>
-            <button
-              onClick={handleAddToCart}
-              className="p-2 rounded-full bg-coffee-700 text-white hover:bg-coffee-800"
-            >
-              <FiShoppingCart />
-            </button>
-          </div>
+          
+          {/* 2. SEMBUNYIKAN TOMBOL JIKA ADMIN/OWNER */}
+          {!isOwner && (
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleFavoriteClick}
+                className={`p-2 rounded-full transition ${isFavorited ? 'bg-red-100 text-red-500' : 'bg-cream-100 text-coffee-700 hover:bg-cream-200'}`}
+              >
+                <FiHeart className={isFavorited ? 'fill-current' : ''} />
+              </button>
+              <button
+                onClick={handleAddToCart}
+                className="p-2 rounded-full bg-coffee-700 text-white hover:bg-coffee-800"
+              >
+                <FiShoppingCart />
+              </button>
+            </div>
+          )}
+          
         </div>
       </div>
     </Link>

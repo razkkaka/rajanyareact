@@ -2,14 +2,17 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import { FiEye, FiEyeOff, FiLock, FiMail } from 'react-icons/fi'
+import { useAuth } from '../context/AuthContext'
 
 export default function Login() {
   const [formData, setFormData] = useState({ email: '', password: '' })
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
+  
+  // TAMBAHKAN BARIS INI:
+  const { login } = useAuth()
 
-  // 1. KITA PISAHKAN LOGIKA LOGIN AGAR BISA DIPANGGIL KAPAN SAJA
   const processLogin = async (loginEmail, loginPassword) => {
     setLoading(true)
     try {
@@ -21,11 +24,10 @@ export default function Login() {
       const data = await res.json()
       
       if (res.ok) {
-        localStorage.setItem('token', data.token)
-        localStorage.setItem('user', JSON.stringify(data.user)) 
+        // HAPUS localStorage manual, GANTI DENGAN FUNGSI Context INI:
+        login(data.token, data.user) 
         
         toast.success('Login berhasil! Mengalihkan...')
-        // Langsung lempar ke halaman admin jika role-nya owner/admin
         if (data.user.role === 'owner' || data.user.role === 'admin') {
           navigate('/admin')
         } else {
@@ -35,14 +37,12 @@ export default function Login() {
         toast.error(data.error || 'Email atau password salah')
       }
     } catch (error) {
-      console.error("Error saat login:", error)
       toast.error('Gagal terhubung ke server')
     } finally {
-      // Pastikan loading selalu berhenti walau error sekalipun
       setLoading(false)
     }
   }
-
+// ... sisa kode di bawahnya biarkan sama ...
   // 2. KETIKA TOMBOL "MASUK" DIKLIK MANUAL
   const handleSubmit = (e) => {
     e.preventDefault()

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { FiHeart, FiMenu, FiShoppingCart, FiUser, FiX, FiPackage, FiLogOut, FiGrid } from 'react-icons/fi'
+import { FiHeart, FiMenu, FiShoppingCart, FiLogOut, FiGrid, FiPackage, FiX } from 'react-icons/fi'
 import { useAuth } from '../context/AuthContext'
 
 export default function Navbar() {
@@ -37,8 +37,14 @@ export default function Navbar() {
           <div className="hidden md:flex items-center gap-3">
             {user ? (
               <>
-                <Link to="/favorites" className="p-2 rounded-full hover:bg-cream-100 text-coffee-700" aria-label="Favorit"><FiHeart /></Link>
-                <Link to="/cart" className="p-2 rounded-full hover:bg-cream-100 text-coffee-700" aria-label="Keranjang"><FiShoppingCart /></Link>
+                {/* SEMBUNYIKAN IKON JIKA DIA ADMIN/OWNER */}
+                {!isOwner && (
+                  <>
+                    <Link to="/favorites" className="p-2 rounded-full hover:bg-cream-100 text-coffee-700" aria-label="Favorit"><FiHeart /></Link>
+                    <Link to="/cart" className="p-2 rounded-full hover:bg-cream-100 text-coffee-700" aria-label="Keranjang"><FiShoppingCart /></Link>
+                  </>
+                )}
+                
                 <div className="relative">
                   <button
                     onClick={() => setShowUserMenu((value) => !value)}
@@ -58,9 +64,11 @@ export default function Navbar() {
                           <FiGrid className="text-sm" /> Dashboard Admin
                         </Link>
                       )}
-                      <Link to="/orders" onClick={() => setShowUserMenu(false)} className="flex items-center gap-2 px-4 py-2 text-coffee-700 hover:bg-cream-50">
-                        <FiPackage className="text-sm" /> Pesanan Saya
-                      </Link>
+                      {!isOwner && (
+                        <Link to="/orders" onClick={() => setShowUserMenu(false)} className="flex items-center gap-2 px-4 py-2 text-coffee-700 hover:bg-cream-50">
+                          <FiPackage className="text-sm" /> Pesanan Saya
+                        </Link>
+                      )}
                       <button onClick={handleLogout} className="w-full flex items-center gap-2 px-4 py-2 text-left text-red-600 hover:bg-red-50">
                         <FiLogOut className="text-sm" /> Logout
                       </button>
@@ -82,6 +90,7 @@ export default function Navbar() {
         </div>
       </div>
 
+      {/* MOBILE MENU */}
       {isOpen && (
         <div className="md:hidden border-t border-cream-200 bg-white">
           <div className="px-4 py-3 space-y-2 text-sm font-medium text-coffee-700">
@@ -90,9 +99,14 @@ export default function Navbar() {
             <Link to="/collaboration" onClick={() => setIsOpen(false)} className="block py-2">Kolaborasi</Link>
             {user ? (
               <>
-                <Link to="/favorites" onClick={() => setIsOpen(false)} className="block py-2">Favorit</Link>
-                <Link to="/cart" onClick={() => setIsOpen(false)} className="block py-2">Keranjang</Link>
-                <Link to="/orders" onClick={() => setIsOpen(false)} className="block py-2">Pesanan Saya</Link>
+                {/* SEMBUNYIKAN MENU MOBILE JIKA DIA ADMIN/OWNER */}
+                {!isOwner && (
+                  <>
+                    <Link to="/favorites" onClick={() => setIsOpen(false)} className="block py-2">Favorit</Link>
+                    <Link to="/cart" onClick={() => setIsOpen(false)} className="block py-2">Keranjang</Link>
+                    <Link to="/orders" onClick={() => setIsOpen(false)} className="block py-2">Pesanan Saya</Link>
+                  </>
+                )}
                 {isOwner && <Link to="/admin" onClick={() => setIsOpen(false)} className="block py-2">Dashboard Admin</Link>}
                 <button onClick={handleLogout} className="w-full text-left py-2 text-red-600">Logout</button>
               </>
