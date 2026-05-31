@@ -39,7 +39,7 @@ export default function Home() {
         <div className="p-7 md:p-10">
           <span className="inline-flex rounded-full bg-coffee-100 px-3 py-1 text-xs font-semibold text-coffee-700">New Season Menu</span>
           <h1 className="mt-5 font-display text-5xl md:text-6xl font-bold text-coffee-900">Experience the Art of Coffee</h1>
-          <p className="mt-4 text-lg text-coffee-700 max-w-xl">Backseat Barista menghadirkan menu minuman premium, pengalaman belanja yang halus, serta peluang kolaborasi UMKM F&B yang profesional.</p>
+          <p className="mt-4 text-lg text-coffee-700 max-w-xl">Backseat Barista menghadirkan makanan minuman premium, pengalaman belanja yang halus, serta peluang kolaborasi UMKM F&B yang profesional.</p>
           <div className="mt-6 flex flex-wrap gap-3">
             <Link to="/menu" className="btn-primary">Jelajahi Menu <FiArrowRight /></Link>
             <Link to="/collaboration" className="btn-secondary">Kolaborasi</Link>
