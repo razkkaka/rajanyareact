@@ -23,6 +23,7 @@ export function initDB() {
       price INTEGER NOT NULL,
       image TEXT,
       category TEXT DEFAULT 'coffee',
+      stock_quantity INTEGER DEFAULT 100,
       stock_status TEXT DEFAULT 'available',
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );

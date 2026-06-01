@@ -31,7 +31,7 @@ export default function Navbar() {
           <div className="hidden md:flex items-center gap-6 text-sm font-medium text-coffee-700">
             <Link to="/" className="hover:text-coffee-900">Beranda</Link>
             <Link to="/menu" className="hover:text-coffee-900">Menu</Link>
-            <Link to="/collaboration" className="hover:text-coffee-900">Kolaborasi</Link>
+            {!isOwner && <Link to="/collaboration" className="hover:text-coffee-900">Kolaborasi</Link>}
           </div>
 
           <div className="hidden md:flex items-center gap-3">
@@ -96,7 +96,7 @@ export default function Navbar() {
           <div className="px-4 py-3 space-y-2 text-sm font-medium text-coffee-700">
             <Link to="/" onClick={() => setIsOpen(false)} className="block py-2">Beranda</Link>
             <Link to="/menu" onClick={() => setIsOpen(false)} className="block py-2">Menu</Link>
-            <Link to="/collaboration" onClick={() => setIsOpen(false)} className="block py-2">Kolaborasi</Link>
+            {!isOwner && <Link to="/collaboration" onClick={() => setIsOpen(false)} className="block py-2">Kolaborasi</Link>}
             {user ? (
               <>
                 {/* SEMBUNYIKAN MENU MOBILE JIKA DIA ADMIN/OWNER */}

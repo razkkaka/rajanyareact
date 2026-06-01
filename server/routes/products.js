@@ -46,11 +46,11 @@ router.get('/:id', (req, res) => {
 
 router.post('/', authenticateToken, requireOwner, upload.single('image'), (req, res) => {
   try {
-    const { name, description, price, category, stock_status } = req.body
+    const { name, description, price, category, stock_status, stock_quantity } = req.body
     const image = req.file ? `/uploads/${req.file.filename}` : null
 
-    const result = db.prepare('INSERT INTO products (name, description, price, category, stock_status, image) VALUES (?, ?, ?, ?, ?, ?)')
-      .run(name, description, Number(price), category || 'coffee', stock_status || 'available', image)
+    const result = db.prepare('INSERT INTO products (name, description, price, category, stock_status, stock_quantity, image) VALUES (?, ?, ?, ?, ?, ?, ?)')
+      .run(name, description, Number(price), category || 'coffee', stock_status || 'available', Number(stock_quantity) || 100, image)
 
     res.status(201).json({ id: result.lastInsertRowid, message: 'Produk berhasil ditambahkan' })
   } catch (error) {
@@ -61,15 +61,15 @@ router.post('/', authenticateToken, requireOwner, upload.single('image'), (req, 
 
 router.put('/:id', authenticateToken, requireOwner, upload.single('image'), (req, res) => {
   try {
-    const { name, description, price, category, stock_status } = req.body
+    const { name, description, price, category, stock_status, stock_quantity } = req.body
     const existing = db.prepare('SELECT * FROM products WHERE id = ?').get(req.params.id)
     if (!existing) {
       return res.status(404).json({ error: 'Produk tidak ditemukan' })
     }
 
     const image = req.file ? `/uploads/${req.file.filename}` : existing.image
-    db.prepare('UPDATE products SET name = ?, description = ?, price = ?, category = ?, stock_status = ?, image = ? WHERE id = ?')
-      .run(name, description, Number(price), category, stock_status, image, req.params.id)
+    db.prepare('UPDATE products SET name = ?, description = ?, price = ?, category = ?, stock_status = ?, stock_quantity = ?, image = ? WHERE id = ?')
+      .run(name, description, Number(price), category, stock_status, Number(stock_quantity) || existing.stock_quantity, image, req.params.id)
 
     res.json({ message: 'Produk berhasil diupdate' })
   } catch (error) {

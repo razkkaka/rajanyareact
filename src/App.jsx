@@ -20,6 +20,7 @@ import Dashboard from './pages/admin/Dashboard'
 import Products from './pages/admin/Products'
 import OrderManagement from './pages/admin/OrderManagement'
 import Verification from './pages/admin/Verification'
+import Collaborations from './pages/admin/Collaborations'
 
 export default function App() {
   const { isOwner } = useAuth() // Ambil status apakah yang login Admin/Owner
@@ -48,6 +49,7 @@ export default function App() {
           <Route path="/admin/products" element={<ProtectedRoute requireOwner><Products /></ProtectedRoute>} />
           <Route path="/admin/orders" element={<ProtectedRoute requireOwner><OrderManagement /></ProtectedRoute>} />
           <Route path="/admin/verification" element={<ProtectedRoute requireOwner><Verification /></ProtectedRoute>} />
+          <Route path="/admin/collaborations" element={<ProtectedRoute requireOwner><Collaborations /></ProtectedRoute>} />
         </Routes>
       </main>
       <Footer />

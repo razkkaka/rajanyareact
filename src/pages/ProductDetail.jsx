@@ -7,7 +7,7 @@ import { useAuth } from '../context/AuthContext'
 export default function ProductDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const { user, token } = useAuth()
+  const { user, token, isOwner } = useAuth()
 
   const [product, setProduct] = useState(null)
   const [quantity, setQuantity] = useState(1)
@@ -55,6 +55,11 @@ export default function ProductDetail() {
     if (!user) {
       toast.error('Silakan login terlebih dahulu')
       navigate('/login')
+      return
+    }
+
+    if (product.stock_status === 'out_of_stock') {
+      toast.error('Produk sedang habis')
       return
     }
 
@@ -124,29 +129,45 @@ export default function ProductDetail() {
         <div className="card p-6">
           <div className="flex items-center justify-between">
             <span className="rounded-full bg-coffee-100 px-3 py-1 text-xs font-semibold text-coffee-700">{product.category === 'coffee' ? 'Kopi' : 'Non-Kopi'}</span>
-            <button onClick={handleToggleFavorite} className={`p-2 rounded-full ${isFavorited ? 'bg-red-100 text-red-500' : 'bg-cream-100 text-coffee-700'}`}>
-              <FiHeart className={isFavorited ? 'fill-current' : ''} />
-            </button>
+            {!isOwner && (
+              <button onClick={handleToggleFavorite} className={`p-2 rounded-full ${isFavorited ? 'bg-red-100 text-red-500' : 'bg-cream-100 text-coffee-700'}`}>
+                <FiHeart className={isFavorited ? 'fill-current' : ''} />
+              </button>
+            )}
           </div>
 
           <h1 className="mt-4 section-title">{product.name}</h1>
           <p className="mt-3 text-coffee-700 text-lg">{product.description}</p>
           <p className="mt-6 text-4xl font-bold text-coffee-900">{formatPrice(product.price)}</p>
 
-          <div className="mt-6 flex items-center gap-3">
-            <span className="text-sm font-medium text-coffee-700">Jumlah</span>
-            <div className="flex items-center gap-2">
-              <button onClick={() => setQuantity((value) => Math.max(1, value - 1))} className="p-2 rounded-lg bg-cream-100 text-coffee-700"><FiMinus /></button>
-              <span className="min-w-8 text-center font-semibold text-coffee-900">{quantity}</span>
-              <button onClick={() => setQuantity((value) => value + 1)} className="p-2 rounded-lg bg-cream-100 text-coffee-700"><FiPlus /></button>
+          {product.stock_status === 'out_of_stock' && (
+            <div className="mt-6 p-4 rounded-lg bg-red-100 border border-red-300 text-red-700 text-sm font-semibold">
+              ⚠️ Produk sedang habis, silakan coba lagi nanti
             </div>
-          </div>
+          )}
 
-          <div className="mt-6 flex gap-3">
-            <button onClick={handleAddToCart} className="btn-primary flex-1">
-              <FiShoppingCart /> Tambah ke Keranjang
-            </button>
-          </div>
+          {!isOwner && (
+            <>
+              <div className="mt-6 flex items-center gap-3">
+                <span className="text-sm font-medium text-coffee-700">Jumlah</span>
+                <div className="flex items-center gap-2">
+                  <button onClick={() => setQuantity((value) => Math.max(1, value - 1))} className="p-2 rounded-lg bg-cream-100 text-coffee-700"><FiMinus /></button>
+                  <span className="min-w-8 text-center font-semibold text-coffee-900">{quantity}</span>
+                  <button onClick={() => setQuantity((value) => value + 1)} className="p-2 rounded-lg bg-cream-100 text-coffee-700"><FiPlus /></button>
+                </div>
+              </div>
+
+              <div className="mt-6 flex gap-3">
+                <button 
+                  onClick={handleAddToCart}
+                  disabled={product.stock_status === 'out_of_stock'}
+                  className={`btn-primary flex-1 ${product.stock_status === 'out_of_stock' ? 'opacity-50 cursor-not-allowed' : ''}`}
+                >
+                  <FiShoppingCart /> {product.stock_status === 'out_of_stock' ? 'Stok Habis' : 'Tambah ke Keranjang'}
+                </button>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>

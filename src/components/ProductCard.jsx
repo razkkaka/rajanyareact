@@ -84,7 +84,11 @@ export default function ProductCard({ product, onFavoriteToggle, isFavorited }) 
         <div className="mt-4 flex items-center justify-between">
           <div>
             <p className="text-lg font-bold text-coffee-900">{formatPrice(product.price)}</p>
-            <p className="text-xs text-coffee-500">{product.stock_status === 'available' ? 'Tersedia' : 'Stok habis'}</p>
+            {product.stock_status === 'out_of_stock' ? (
+              <p className="text-xs font-semibold text-red-600">Stok Habis</p>
+            ) : (
+              <p className="text-xs text-coffee-500">Tersedia</p>
+            )}
           </div>
           
           {/* 2. SEMBUNYIKAN TOMBOL JIKA ADMIN/OWNER */}
@@ -98,7 +102,8 @@ export default function ProductCard({ product, onFavoriteToggle, isFavorited }) 
               </button>
               <button
                 onClick={handleAddToCart}
-                className="p-2 rounded-full bg-coffee-700 text-white hover:bg-coffee-800"
+                disabled={product.stock_status === 'out_of_stock'}
+                className={`p-2 rounded-full ${product.stock_status === 'out_of_stock' ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-coffee-700 text-white hover:bg-coffee-800'}`}
               >
                 <FiShoppingCart />
               </button>

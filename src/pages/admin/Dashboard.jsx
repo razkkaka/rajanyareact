@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { FiBox, FiCheckCircle, FiClock, FiDollarSign, FiFileText, FiPackage, FiShield } from 'react-icons/fi'
+import { FiBox, FiCheckCircle, FiClock, FiDollarSign, FiFileText, FiPackage, FiShield, FiBriefcase } from 'react-icons/fi'
 import toast from 'react-hot-toast'
 import { useAuth } from '../../context/AuthContext'
 
@@ -42,6 +42,7 @@ export default function Dashboard() {
     { label: 'Manajemen Produk', path: '/admin/products', icon: FiBox, description: 'Tambah, edit, dan hapus menu.' },
     { label: 'Kelola Pesanan', path: '/admin/orders', icon: FiFileText, description: 'Pantau dan perbarui status pesanan.' },
     { label: 'Verifikasi Pembayaran', path: '/admin/verification', icon: FiShield, description: 'Verifikasi bukti pembayaran pelanggan.' },
+    { label: 'Kelola Kolaborasi', path: '/admin/collaborations', icon: FiBriefcase, description: 'Kelola pengajuan kolaborasi UMKM.' },
   ]
 
   if (loading) {
@@ -76,7 +77,7 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="mt-5 grid md:grid-cols-3 gap-4">
+        <div className="mt-5 grid md:grid-cols-2 lg:grid-cols-4 gap-4">
           {menuItems.map((item) => (
             <Link key={item.path} to={item.path} className="rounded-3xl border border-cream-200 p-5 hover:bg-cream-50 transition">
               <div className="w-10 h-10 rounded-xl bg-coffee-100 text-coffee-700 flex items-center justify-center">
